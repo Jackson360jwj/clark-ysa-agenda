@@ -126,7 +126,15 @@
         const r = await fetchWithTimeout(u, { mode: 'cors' }, 7000);
         const text = await r.text();
         if (r.ok && !/^\s*</.test(text)) {
-          records = parseCSV(text); state.source = 'csv'; state.sourceLabel = 'Google Sheet (link-shared, read-only)';
+          const parsed = parseCSV(text);
+          // gviz silently falls back to the first tab when the named tab is missing,
+          // so only accept it if it really is the Schedule layout.
+          if (parsed.length && 'Date' in parsed[0] && ('Conducting' in parsed[0] || 'Presiding' in parsed[0])) {
+            records = parsed; state.source = 'csv'; state.sourceLabel = 'Google Sheet (link-shared, read-only)';
+          } else {
+            console.warn('Public CSV reachable but has no Schedule tab; using the snapshot instead.');
+            toast('That Google Sheet has no "Schedule" tab – showing the snapshot instead.');
+          }
         }
       } catch (e) { /* sheet is private – expected */ }
     }
