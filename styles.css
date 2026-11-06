@@ -224,3 +224,11 @@ dialog::backdrop { background: rgba(10, 20, 30, .45); backdrop-filter: blur(2px)
   .paper .notes { background: #f3f3f3 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .paper .ph, .paper .item h3 { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* phone top bar: keep the ward name on one line, drop the subtitle */
+@media (max-width: 520px) {
+  .brand h1 { white-space: nowrap; font-size: 16px; }
+  .brand p { display: none; }
+  .badge { max-width: 34vw; font-size: 11px; }
+  .topbar { padding: 10px 12px; }
+}
