@@ -432,12 +432,55 @@
     return out.join('\n');
   }
 
+  let lastPdfUrl = null;
+  function pdfFileName(rec) { return `Conducting Sheet ${rec.date}.pdf`; }
+
+  function makePdf(rec) {
+    if (!(window.jspdf && window.buildConductingPdf)) return null;
+    // Prefer a single page: shrink the body a little if it would spill over.
+    for (const k of [1, 0.92, 0.85]) {
+      const doc = window.buildConductingPdf(rec, CFG, HYMNS, k);
+      if (doc.getNumberOfPages() === 1 || k === 0.85) return doc;
+    }
+    return null;
+  }
+
   function generate() {
     const rec = effectiveRecord(state.date);
     $('#agendaSheet').innerHTML = renderSheet(rec);
     $('#formView').hidden = true; $('#sheetView').hidden = false;
     document.title = `Conducting Sheet – ${rec.date}`;
     window.scrollTo(0, 0);
+    const status = $('#pdfStatus');
+    try {
+      const doc = makePdf(rec);
+      if (!doc) throw new Error('PDF library not loaded');
+      if (lastPdfUrl) URL.revokeObjectURL(lastPdfUrl);
+      lastPdfUrl = URL.createObjectURL(doc.output('blob'));
+      doc.save(pdfFileName(rec));
+      status.textContent = `PDF downloaded as "${pdfFileName(rec)}" – formatted for US Letter. Below is a preview of the same sheet.`;
+      $('#openPdfBtn').hidden = false; $('#downloadPdfBtn').hidden = false;
+      toast('PDF downloaded.');
+    } catch (e) {
+      console.error(e);
+      status.textContent = 'The PDF library could not be loaded (offline?). Use your browser\'s Print / Save as PDF on this preview instead.';
+      $('#openPdfBtn').hidden = true; $('#downloadPdfBtn').textContent = 'Print / Save PDF';
+    }
+  }
+  function downloadPdfAgain() {
+    const rec = effectiveRecord(state.date);
+    const doc = makePdf(rec);
+    if (!doc) { window.print(); return; }
+    doc.save(pdfFileName(rec)); toast('PDF downloaded.');
+  }
+  function openPdf() {
+    const rec = effectiveRecord(state.date);
+    const doc = makePdf(rec);
+    if (!doc) { window.print(); return; }
+    if (lastPdfUrl) URL.revokeObjectURL(lastPdfUrl);
+    lastPdfUrl = URL.createObjectURL(doc.output('blob'));
+    const w = window.open(lastPdfUrl, '_blank');
+    if (!w) toast('Your browser blocked the pop-up – use Download PDF instead.');
   }
   function backToForm() {
     $('#sheetView').hidden = true; $('#formView').hidden = false;
@@ -487,7 +530,8 @@
     $('#agendaForm').addEventListener('submit', e => { e.preventDefault(); generate(); });
     $('#generateBtn').addEventListener('click', generate);
     $('#backBtn').addEventListener('click', backToForm);
-    $('#printBtn').addEventListener('click', () => window.print());
+    $('#downloadPdfBtn').addEventListener('click', downloadPdfAgain);
+    $('#openPdfBtn').addEventListener('click', openPdf);
     $('#copyBtn').addEventListener('click', async () => {
       try { await navigator.clipboard.writeText(sheetAsText(effectiveRecord(state.date))); toast('Copied as plain text.'); }
       catch (e) { toast('Copy failed – your browser blocked clipboard access.'); }

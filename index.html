@@ -160,7 +160,7 @@
       <span id="draftStatus" class="muted small"></span>
       <div class="btn-row">
         <button id="saveBtn" class="secondary" type="button" hidden>Save to Google Sheet</button>
-        <button id="generateBtn" class="primary" type="button">Generate conducting sheet</button>
+        <button id="generateBtn" class="primary" type="button">Generate PDF</button>
       </div>
     </div>
   </section>
@@ -170,9 +170,11 @@
     <div class="toolbar no-print">
       <button id="backBtn" class="ghost" type="button">← Back to form</button>
       <div class="spacer"></div>
-      <button id="copyBtn" class="secondary" type="button">Copy as text</button>
-      <button id="printBtn" class="primary" type="button">Print / Save PDF</button>
+      <button id="copyBtn" class="ghost" type="button">Copy as text</button>
+      <button id="openPdfBtn" class="secondary" type="button">Open PDF</button>
+      <button id="downloadPdfBtn" class="primary" type="button">Download PDF again</button>
     </div>
+    <p id="pdfStatus" class="muted small no-print pdf-status"></p>
     <article id="agendaSheet" class="paper" aria-live="polite"></article>
   </section>
 
@@ -210,6 +212,8 @@
 
 <script src="config.js"></script>
 <script src="hymns.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+<script src="pdf.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

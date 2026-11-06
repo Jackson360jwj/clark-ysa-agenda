@@ -232,3 +232,5 @@ dialog::backdrop { background: rgba(10, 20, 30, .45); backdrop-filter: blur(2px)
   .badge { max-width: 34vw; font-size: 11px; }
   .topbar { padding: 10px 12px; }
 }
+
+.pdf-status { margin: -6px 0 14px; }
