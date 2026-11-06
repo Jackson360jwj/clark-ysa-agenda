@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clark YSA Conducting Sheet</title>
+<meta name="description" content="Fill in the Sunday program for the Clark YSA Ward and generate a printable sacrament meeting conducting sheet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%232a6b99'/%3E%3Cpath d='M18 20h28M18 32h28M18 44h18' stroke='white' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<header class="topbar no-print">
+  <div class="brand">
+    <div class="mark" aria-hidden="true"></div>
+    <div>
+      <h1 id="wardTitle">Clark YSA Ward</h1>
+      <p>Sacrament Meeting Conducting Sheet</p>
+    </div>
+  </div>
+  <div class="status">
+    <span id="sourceBadge" class="badge loading" title="Where the schedule is being read from">Loading schedule…</span>
+    <button id="settingsBtn" class="icon-btn" type="button" title="Settings" aria-label="Settings">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================ FORM VIEW ============================ -->
+  <section id="formView" class="view">
+
+    <div class="card picker">
+      <div class="picker-main">
+        <label class="field grow">
+          <span>Sunday</span>
+          <select id="dateSelect" aria-label="Which Sunday"></select>
+        </label>
+        <label class="field">
+          <span>Meeting type</span>
+          <select id="meetingType" data-key="meetingType">
+            <option>Regular</option>
+            <option>Fast &amp; Testimony</option>
+            <option>Stake Conference</option>
+            <option>General Conference</option>
+            <option>Primary Program</option>
+            <option>Other</option>
+          </select>
+        </label>
+      </div>
+      <div class="picker-side">
+        <p id="rowSummary" class="muted small"></p>
+        <div class="btn-row">
+          <button id="reloadBtn" class="ghost small" type="button">Reload schedule</button>
+          <button id="clearBtn" class="ghost small danger" type="button" hidden>Discard my edits</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="legend-help muted small">
+      <span class="tag from-sheet">from schedule</span> came from the Google Sheet &nbsp;·&nbsp;
+      <span class="tag edited">edited</span> typed here and kept on this device until saved &nbsp;·&nbsp;
+      blank fields are yours to fill in.
+    </p>
+
+    <form id="agendaForm" autocomplete="off" novalidate>
+
+      <fieldset class="card">
+        <legend><span class="step">1</span> Leadership &amp; music</legend>
+        <div class="grid two">
+          <label class="field"><span>Presiding</span><input type="text" data-key="presiding" placeholder="Bishop Jackson"></label>
+          <label class="field"><span>Conducting</span><input type="text" data-key="conducting" placeholder="Who is conducting"></label>
+          <label class="field"><span>Chorister</span><input type="text" data-key="chorister" placeholder="Name"></label>
+          <label class="field"><span>Organist / accompanist</span><input type="text" data-key="organist" placeholder="Name"></label>
+        </div>
+        <p class="muted small" id="counselorLine"></p>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">2</span> Announcements</legend>
+        <label class="field"><span class="sr-only">Announcements</span>
+          <textarea data-key="announcements" rows="4" placeholder="One announcement per line. Each line becomes a bullet on the sheet."></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">3</span> Opening</legend>
+        <div class="hymn-row">
+          <label class="field num"><span>Opening hymn #</span><input type="text" inputmode="numeric" data-key="openingHymnNum" data-hymn="openingHymn" placeholder="#"></label>
+          <label class="field grow"><span>Hymn title</span><input type="text" data-key="openingHymn" list="hymnList" placeholder="Type a number on the left, or search by title"></label>
+        </div>
+        <label class="field"><span>Invocation</span><input type="text" data-key="invocation" placeholder="Name"></label>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">4</span> Ward business <span class="legend-note">leave blank anything that isn't happening</span></legend>
+        <div class="grid two">
+          <label class="field"><span>Stake business</span><input type="text" data-key="stakeBusiness" placeholder="e.g. High Councilor Smith"></label>
+          <label class="field"><span>Other ward business</span><input type="text" data-key="wardBusiness" placeholder="Missionary announcement, baptism, newest member welcome…"></label>
+        </div>
+        <label class="field"><span>New members (records received)</span><textarea data-key="newMembers" rows="2" placeholder="Names, one per line"></textarea></label>
+        <label class="field"><span>Releases</span><textarea data-key="releases" rows="2" placeholder="Name – calling, one per line"></textarea></label>
+        <label class="field"><span>Sustainings</span><textarea data-key="sustainings" rows="2" placeholder="Name – calling, one per line"></textarea></label>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">5</span> Sacrament</legend>
+        <div class="hymn-row">
+          <label class="field num"><span>Sacrament hymn #</span><input type="text" inputmode="numeric" data-key="sacramentHymnNum" data-hymn="sacramentHymn" placeholder="#"></label>
+          <label class="field grow"><span>Hymn title</span><input type="text" data-key="sacramentHymn" list="hymnList" placeholder="Sacrament hymns are #169–196"></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="card" id="programSection">
+        <legend><span class="step">6</span> Program</legend>
+        <p class="fast-note muted" hidden>Fast &amp; Testimony meeting: the bishopric bears brief testimonies, then the time is turned over to the congregation. Speakers are hidden.</p>
+        <div class="regular-only">
+          <div class="grid speaker">
+            <label class="field"><span>Speaker 1</span><input type="text" data-key="speaker1" placeholder="Name"></label>
+            <label class="field grow"><span>Topic</span><input type="text" data-key="speaker1Topic" placeholder="Topic or scripture"></label>
+          </div>
+          <div class="grid speaker">
+            <label class="field"><span>Speaker 2</span><input type="text" data-key="speaker2" placeholder="Name"></label>
+            <label class="field grow"><span>Topic</span><input type="text" data-key="speaker2Topic" placeholder="Topic or scripture"></label>
+          </div>
+          <div class="hymn-row">
+            <label class="field num"><span>Rest hymn #</span><input type="text" inputmode="numeric" data-key="restHymnNum" data-hymn="restHymn" placeholder="#"></label>
+            <label class="field grow"><span>Rest hymn title</span><input type="text" data-key="restHymn" list="hymnList" placeholder="Leave blank if there is a musical number instead"></label>
+          </div>
+          <label class="field"><span>Musical number</span><input type="text" data-key="musicalNumber" placeholder="Performer(s) – piece"></label>
+          <div class="grid speaker">
+            <label class="field"><span>Speaker 3</span><input type="text" data-key="speaker3" placeholder="Name (optional)"></label>
+            <label class="field grow"><span>Topic</span><input type="text" data-key="speaker3Topic" placeholder="Topic or scripture"></label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">7</span> Closing</legend>
+        <div class="hymn-row">
+          <label class="field num"><span>Closing hymn #</span><input type="text" inputmode="numeric" data-key="closingHymnNum" data-hymn="closingHymn" placeholder="#"></label>
+          <label class="field grow"><span>Hymn title</span><input type="text" data-key="closingHymn" list="hymnList" placeholder="Type a number on the left, or search by title"></label>
+        </div>
+        <label class="field"><span>Benediction</span><input type="text" data-key="benediction" placeholder="Name"></label>
+      </fieldset>
+
+      <fieldset class="card">
+        <legend><span class="step">8</span> Notes <span class="legend-note">printed in small type at the bottom of the sheet</span></legend>
+        <label class="field"><span class="sr-only">Notes</span><textarea data-key="notes" rows="2" placeholder="Reminders for whoever is conducting"></textarea></label>
+      </fieldset>
+
+      <datalist id="hymnList"></datalist>
+    </form>
+
+    <div class="actionbar">
+      <span id="draftStatus" class="muted small"></span>
+      <div class="btn-row">
+        <button id="saveBtn" class="secondary" type="button" hidden>Save to Google Sheet</button>
+        <button id="generateBtn" class="primary" type="button">Generate conducting sheet</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ SHEET VIEW ============================ -->
+  <section id="sheetView" class="view" hidden>
+    <div class="toolbar no-print">
+      <button id="backBtn" class="ghost" type="button">← Back to form</button>
+      <div class="spacer"></div>
+      <button id="copyBtn" class="secondary" type="button">Copy as text</button>
+      <button id="printBtn" class="primary" type="button">Print / Save PDF</button>
+    </div>
+    <article id="agendaSheet" class="paper" aria-live="polite"></article>
+  </section>
+
+</main>
+
+<footer class="site-footer no-print muted small">
+  <span id="footerSource"></span>
+  <a id="sheetLink" href="#" target="_blank" rel="noopener">Open the Google Sheet</a>
+</footer>
+
+<!-- ============================ SETTINGS ============================ -->
+<dialog id="settingsDialog">
+  <form method="dialog" class="settings">
+    <h2>Settings</h2>
+    <p class="muted small">Where this page reads the schedule from, in the order it tries:</p>
+    <ol class="muted small">
+      <li><strong>Apps Script web app</strong> – live, and lets you save back to the sheet. Set it up once with <code>apps-script/Code.gs</code> (instructions are in that file).</li>
+      <li><strong>Public CSV feed</strong> – only if the sheet is shared "Anyone with the link can view".</li>
+      <li><strong>Snapshot</strong> in this site (<code>data/schedule.json</code>) – read-only.</li>
+    </ol>
+    <label class="field"><span>Apps Script web app URL (ends in /exec)</span>
+      <input type="url" id="appsScriptInput" placeholder="https://script.google.com/macros/s/…/exec">
+    </label>
+    <p id="settingsTest" class="small"></p>
+    <div class="btn-row">
+      <button type="button" id="testScriptBtn" class="ghost">Test connection</button>
+      <div class="spacer"></div>
+      <button type="button" id="settingsCancel" class="ghost">Cancel</button>
+      <button type="submit" id="settingsSave" class="primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script src="hymns.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
